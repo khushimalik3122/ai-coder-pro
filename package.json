@@ -9,15 +9,34 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:ai-coder-pro.helloWorld",
+    "onCommand:aiCoderPro.generateCode"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "ai-coder-pro.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "aiCoderPro.generateCode",
+        "title": "AI Coder: Generate Code from Prompt"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "AI Coder Pro Configuration",
+      "properties": {
+        "aiCoderPro.huggingFaceApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Your Hugging Face API Key for code generation."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
@@ -34,16 +53,25 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.102.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
+    "@types/node-fetch": "^2.6.12",
+    "@types/vscode": "^1.102.0",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
-    "eslint": "^9.25.1",
-    "esbuild": "^0.25.3",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.8.3",
     "@vscode/test-cli": "^0.0.11",
-    "@vscode/test-electron": "^2.5.2"
+    "@vscode/test-electron": "^2.5.2",
+    "dotenv": "^17.2.0",
+    "esbuild": "^0.25.3",
+    "eslint": "^9.25.1",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@huggingface/agents": "^0.0.5",
+    "@huggingface/inference": "^4.5.1",
+    "@huggingface/transformers": "^3.6.3",
+    "langchain": "^0.3.30",
+    "node-fetch": "^2.7.0"
   }
 }

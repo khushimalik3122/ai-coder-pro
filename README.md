@@ -1,71 +1,91 @@
-# ai-coder-pro README
+# ai-coder-pro
 
-This is the README for your extension "ai-coder-pro". After writing up a brief description, we recommend including the following sections.
+AI-Coder-Pro is a Visual Studio Code extension that leverages AI-powered multi-agent orchestration to enhance your coding productivity. It is designed to automate, assist, and streamline development workflows directly within VS Code.
+
+## Tech Stack
+
+- **Language:** TypeScript (ES2022)
+- **Build Tool:** [esbuild](https://esbuild.github.io/) (custom build script)
+- **Extension API:** [VS Code Extension API](https://code.visualstudio.com/api)
+- **Linting:** ESLint with TypeScript support
+- **Testing:** Mocha, @vscode/test-cli, @vscode/test-electron
+- **Package Management:** npm
+- **Node.js Target:** Node16 (CommonJS)
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- Multi-agent orchestration for code generation and automation (planned)
+- Command palette integration ("Hello World" sample command included)
+- AI-powered code generation using Hugging Face StarCoder
+- Extensible architecture for future AI-powered features
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- Visual Studio Code v1.102.0 or higher
+- Node.js (for development/build)
+- Hugging Face API key (for code generation)
+
+## Getting Started
+
+1. Clone the repository and install dependencies:
+   ```sh
+   npm install
+   ```
+2. Build the extension:
+   ```sh
+   npm run compile
+   ```
+3. Launch the extension in the Extension Development Host:
+   ```sh
+   code .
+   # Press F5 to start debugging
+   ```
+
+## Usage
+
+1. **Set your Hugging Face API key** (choose one):
+   - **Recommended:** In VS Code, open Settings and set `AI Coder Pro: Hugging Face Api Key` (`aiCoderPro.huggingFaceApiKey`).
+   - Or, create a `.env` file in your project root:
+     ```env
+     HUGGINGFACE_API_KEY=your_huggingface_api_key_here
+     ```
+   - Or, you will be prompted for your API key the first time you use the command.
+2. Open a file and place your cursor where you want to insert generated code.
+3. Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`), run `AI Coder: Generate Code from Prompt`.
+4. Enter your code prompt and wait for the completion to be inserted at your cursor.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+- `aiCoderPro.huggingFaceApiKey`: Your Hugging Face API Key for code generation.
 
-For example:
+## Limitations
 
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+- Requires a valid Hugging Face API key with access to the StarCoder model.
+- Subject to Hugging Face API rate limits and usage quotas.
+- Network connectivity is required for code generation.
+- Generated code quality depends on the underlying model and prompt.
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- No known issues at this time.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+### 0.0.1
+- Initial project scaffolding and setup.
+- Sample "Hello World" command.
+- AI code generation command with Hugging Face integration.
 
 ---
 
-## Following extension guidelines
+## Contributing
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+Contributions are welcome! Please open issues or pull requests for bug fixes, features, or suggestions.
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+## License
 
-## Working with Markdown
+MIT
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+---
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+*This project follows the [VS Code Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines).*

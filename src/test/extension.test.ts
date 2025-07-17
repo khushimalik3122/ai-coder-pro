@@ -12,4 +12,9 @@ suite('Extension Test Suite', () => {
 		assert.strictEqual(-1, [1, 2, 3].indexOf(5));
 		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
 	});
+
+	test('aiCoderPro.generateCode command should be registered', async () => {
+		const commands = await vscode.commands.getCommands(true);
+		assert.ok(commands.includes('aiCoderPro.generateCode'));
+	});
 });
