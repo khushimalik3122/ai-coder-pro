@@ -20,11 +20,9 @@ AI-Coder-Pro was developed to explore the integration of open, customizable LLMs
 
 ## Example Outputs
 
-| Prompt                                   | ai-coder-pro Output (Kimi-K2-Instruct) | Copilot Output |
-|-------------------------------------------|----------------------------------------|----------------|
-| "Write a Python function to reverse a string" | ![Uploading image.png…]()
-            | <img width="2303" height="949" alt="image" src="https://github.com/user-attachments/assets/33b23c95-1cce-47eb-ba57-d4f0f91150fd" />
-|
+| Prompt                                        | ai-coder-pro Output (Kimi-K2-Instruct) | Copilot Output |
+|-----------------------------------------------|----------------------------------------|----------------|
+| "Write a Python function to reverse a string" |  <img width="3139" height="1921" alt="image" src="https://github.com/user-attachments/assets/9aaef219-68e8-4871-ae05-d99f3e8fd156" /> | <img width="2303" height="949" alt="image" src="https://github.com/user-attachments/assets/69fceb7a-4a0f-49d8-be7a-ce0d3f5c2ff3" /> |
 
 ## Tech Stack
 
