@@ -1,4 +1,6 @@
-const esbuild = require("esbuild");
+import esbuild from "esbuild";
+import * as fs from 'fs';
+import * as path from 'path';
 
 const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
@@ -22,7 +24,6 @@ const esbuildProblemMatcherPlugin = {
 		});
 	},
 };
-
 async function main() {
 	const ctx = await esbuild.context({
 		entryPoints: [

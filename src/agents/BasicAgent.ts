@@ -8,8 +8,23 @@ export class BasicAgent {
     this.apiKey = apiKey;
   }
 
-  async generateCompletion(prompt: string): Promise<string> {
+  async generateCompletion(prompt: string, options?: { temperature?: number; maxTokens?: number }): Promise<string> {
     try {
+      const body: any = {
+        model: this.model,
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      };
+      if (options?.temperature !== undefined) {
+        body.temperature = options.temperature;
+      }
+      if (options?.maxTokens !== undefined) {
+        body.max_tokens = options.maxTokens;
+      }
       const response = await fetch(
         'https://api.together.xyz/v1/chat/completions',
         {
@@ -18,15 +33,7 @@ export class BasicAgent {
             'Authorization': `Bearer ${this.apiKey}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            model: this.model,
-            messages: [
-              {
-                role: 'user',
-                content: prompt
-              }
-            ]
-          })
+          body: JSON.stringify(body)
         }
       );
       const data = await response.json();

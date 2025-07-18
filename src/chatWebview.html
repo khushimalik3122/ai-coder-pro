@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AI Coder Pro Chat</title>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+	<style>
+		body { background: #181a20; color: #e6e6e6; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
+		#chat { height: 70vh; overflow-y: auto; padding: 2em 1em 1em 1em; border-bottom: 1px solid #333; display: flex; flex-direction: column; gap: 1.2em; }
+		#inputRow { display: flex; gap: 0.7em; padding: 1.2em; background: #20232a; }
+		#prompt { flex: 1; padding: 1em; border-radius: 8px; border: 1px solid #444; background: #23272f; color: #fff; font-size: 1.1em; }
+		button { padding: 0.9em 1.5em; border: none; border-radius: 8px; background: #007acc; color: #fff; cursor: pointer; font-weight: 600; font-size: 1.05em; transition: background 0.2s; }
+		button:active { background: #005fa3; }
+		.action-btn { background: #2d8cff; margin-left: 0.5em; }
+		#export { background: #444; margin-left: 0.5em; }
+		#export:hover { background: #666; }
+		.message { max-width: 70%; padding: 1.1em 1.3em; border-radius: 18px; word-break: break-word; font-size: 1.08em; margin-bottom: 0; box-shadow: 0 2px 8px #0002; }
+		.user { background: #23272f; color: #7fdfff; align-self: flex-end; border-bottom-right-radius: 4px; border-top-right-radius: 18px; border-top-left-radius: 18px; border-bottom-left-radius: 18px; }
+		.ai { background: #212b1b; color: #b5ff7f; align-self: flex-start; border-bottom-left-radius: 4px; border-top-right-radius: 18px; border-top-left-radius: 18px; border-bottom-right-radius: 18px; }
+		b.user { color: #7fdfff; }
+		b.ai { color: #b5ff7f; }
+		pre, code { background: #23272f; color: #fffae3; border-radius: 8px; padding: 0.5em 0.9em; font-family: 'Fira Mono', 'Consolas', monospace; font-size: 1em; }
+		pre { overflow-x: auto; }
+		#loading { color: #b5ff7f; font-style: italic; margin: 0.5em 0 0 0.5em; display: none; }
+	</style>
+	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+	<div id="chat"></div>
+	<div id="loading">AI is typing...</div>
+	<div id="inputRow">
+		<input id="prompt" type="text" placeholder="Type your prompt..." />
+		<button id="send">Send</button>
+		<button class="action-btn" id="summarize">Summarize</button>
+		<button class="action-btn" id="explain">Explain</button>
+		<button class="action-btn" id="refactor">Refactor</button>
+		<button class="action-btn" id="export">Export</button>
+	</div>
+	<script>
+		const vscode = acquireVsCodeApi();
+		const chat = document.getElementById('chat');
+		const input = document.getElementById('prompt');
+		const summarizeBtn = document.getElementById('summarize');
+		const explainBtn = document.getElementById('explain');
+		const refactorBtn = document.getElementById('refactor');
+		const exportBtn = document.getElementById('export');
+		const loading = document.getElementById('loading');
+		let messages = [];
+
+		function renderMessages() {
+			chat.innerHTML = '';
+			for (const msg of messages) {
+				const div = document.createElement('div');
+				div.className = 'message ' + msg.role;
+				let content = msg.text;
+				if (msg.role === 'ai') {
+					content = marked.parse(content);
+				}
+				div.innerHTML = '<b class="' + msg.role + '">' + (msg.role === 'user' ? 'You' : 'AI') + ':</b><br>' + content;
+				chat.appendChild(div);
+			}
+			chat.scrollTop = chat.scrollHeight;
+		}
+
+		document.getElementById('send').onclick = () => {
+			const prompt = input.value.trim();
+			if (!prompt) return;
+			messages.push({ role: 'user', text: prompt });
+			renderMessages();
+			input.value = '';
+			loading.style.display = 'block';
+			vscode.postMessage({ type: 'prompt', prompt });
+		};
+		input.addEventListener('keydown', function(e) {
+			if (e.key === 'Enter') document.getElementById('send').onclick();
+		});
+
+		function sendEditorAction(action) {
+			const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
+			if (!lastUserMsg) return;
+			loading.style.display = 'block';
+			vscode.postMessage({ type: 'editorAction', action, text: lastUserMsg.text });
+		}
+		summarizeBtn.onclick = () => sendEditorAction('summarize');
+		explainBtn.onclick = () => sendEditorAction('explain');
+		refactorBtn.onclick = () => sendEditorAction('refactor');
+		exportBtn.onclick = function() {
+			var md = '';
+			for (var i = 0; i < messages.length; i++) {
+				var msg = messages[i];
+				md += '```' + (msg.role === 'user' ? 'User' : 'AI') + '\n' + msg.text + '\n```\n';
+			}
+			vscode.postMessage({ type: 'export', markdown: md });
+		};
+
+		window.addEventListener('message', function(event) {
+			const message = event.data;
+			if (message.type === 'ai') {
+				messages.push({ role: 'ai', text: message.text });
+				renderMessages();
+				loading.style.display = 'none';
+			}
+			if (message.type === 'user') {
+				messages.push({ role: 'user', text: message.text });
+				renderMessages();
+			}
+		});
+	</script>
+</body>
+</html> 

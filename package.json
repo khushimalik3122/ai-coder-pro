@@ -12,7 +12,8 @@
   "activationEvents": [
     "onStartupFinished",
     "onCommand:ai-coder-pro.helloWorld",
-    "onCommand:aiCoderPro.generateCode"
+    "onCommand:aiCoderPro.generateCode",
+    "onCommand:aiCoderPro.openChatPanel"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -24,6 +25,26 @@
       {
         "command": "aiCoderPro.generateCode",
         "title": "AI Coder: Generate Code from Prompt"
+      },
+      {
+        "command": "aiCoderPro.openChatPanel",
+        "title": "AI Coder: Open Chat Panel"
+      },
+      {
+        "command": "aiCoderPro.summarizeCode",
+        "title": "AI Coder: Summarize Selected Code"
+      },
+      {
+        "command": "aiCoderPro.explainCode",
+        "title": "AI Coder: Explain Selected Code"
+      },
+      {
+        "command": "aiCoderPro.refactorCode",
+        "title": "AI Coder: Refactor Selected Code"
+      },
+      {
+        "command": "aiCoderPro.projectWideRefactor",
+        "title": "AI Coder: Project-Wide Refactor"
       }
     ],
     "configuration": {
@@ -34,6 +55,16 @@
           "type": "string",
           "default": "",
           "description": "Your Hugging Face API Key for code generation."
+        },
+        "aiCoderPro.temperature": {
+          "type": "number",
+          "default": 0.7,
+          "description": "Sampling temperature for AI completions (0.0-2.0)."
+        },
+        "aiCoderPro.maxTokens": {
+          "type": "number",
+          "default": 512,
+          "description": "Maximum number of tokens for AI completions."
         }
       }
     }
