@@ -135,7 +135,7 @@ MIT
    - Download from [nodejs.org](https://nodejs.org/) and install.
 2. **Clone the Repository**:
    ```sh
-   git clone <(https://github.com/khushimalik3122/ai-coder-pro)>
+   git clone (https://github.com/khushimalik3122/ai-coder-pro)
    cd ai-coder-pro
    ```
 3. **Install Dependencies**:
