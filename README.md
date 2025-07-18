@@ -20,9 +20,15 @@ AI-Coder-Pro was developed to explore the integration of open, customizable LLMs
 
 ## Example Outputs
 
+<<<<<<< HEAD
 | Prompt                                   | ai-coder-pro Output (Kimi-K2-Instruct) | Copilot Output |
 |-------------------------------------------|----------------------------------------|----------------|
 | "Write a Python function to reverse a string" | image.png               | image.png |
+=======
+| Prompt                                        | ai-coder-pro Output (Kimi-K2-Instruct) | Copilot Output |
+|-----------------------------------------------|----------------------------------------|----------------|
+| "Write a Python function to reverse a string" |  <img width="3139" height="1921" alt="image" src="https://github.com/user-attachments/assets/9aaef219-68e8-4871-ae05-d99f3e8fd156" /> | <img width="2303" height="949" alt="image" src="https://github.com/user-attachments/assets/69fceb7a-4a0f-49d8-be7a-ce0d3f5c2ff3" /> |
+>>>>>>> a851507a4e6aefedafdd97fefe4ec62c34395aef
 
 ## Tech Stack
 
@@ -111,6 +117,7 @@ MIT
 
 *This project follows the [VS Code Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines).*
 
+<<<<<<< HEAD
 ## New Features (vNext)
 
 - **Enhanced Chat UI**: Conversation history, code formatting (Markdown/code blocks), and export chat as Markdown.
@@ -166,3 +173,5 @@ MIT
 5. Confirm if prompted about large changes.
 6. The extension will process each file and apply the AI's changes.
 7. Review your changes (use git or backups for safety).
+=======
+>>>>>>> a851507a4e6aefedafdd97fefe4ec62c34395aef
