@@ -22,7 +22,7 @@ AI Coder Pro is a modern, smart VS Code extension that brings advanced AI coding
 
 1. **Clone the Repository**
    ```sh
-   git clone [<your-repo-url>](https://github.com/khushimalik3122/ai-coder-pro)
+   git clone https://github.com/khushimalik3122/ai-coder-pro
    cd ai-coder-pro
    ```
 2. **Install Dependencies**
