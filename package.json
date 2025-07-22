@@ -51,10 +51,15 @@
       "type": "object",
       "title": "AI Coder Pro Configuration",
       "properties": {
-        "aiCoderPro.huggingFaceApiKey": {
+        "aiCoderPro.togetherApiKey": {
           "type": "string",
           "default": "",
-          "description": "Your Hugging Face API Key for code generation."
+          "description": "Your Together AI API Key for code generation."
+        },
+        "aiCoderPro.perplexityApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Your Perplexity API Key for code generation."
         },
         "aiCoderPro.temperature": {
           "type": "number",
