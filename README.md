@@ -3,7 +3,8 @@
 AI Coder Pro is a modern, smart VS Code extension that brings advanced AI coding assistance directly into your editor. It features a Perplexity-inspired chat UI, smart agents, file upload, and more to supercharge your coding workflow.
 ---
 # UI 
-![Uploading image.png…]()
+![AI Coder Pro](<img width="2356" height="1304" alt="image" src="https://github.com/user-attachments/assets/618637b0-beb0-4c36-9adf-76dc3272e159" />
+)
 ---
 ## Features
 
