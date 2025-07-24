@@ -231,18 +231,30 @@
 	<div id="main">
 		<div id="logo">AI Coder Pro</div>
 		<div id="chat-box">
-			<div id="chat"></div>
-			<div id="loading">AI is typing...</div>
+		<div id="chat"></div>
+		<div id="loading">AI is typing...</div>
+			<!-- Model selection dropdown -->
+			<div style="width:100%;display:flex;justify-content:center;align-items:center;margin-bottom:0.7em;">
+				<label for="modelSelect" style="color:#b5ff7f;font-weight:600;margin-right:0.7em;">Model:</label>
+				<select id="modelSelect" style="background:#232b4d;color:#fff;border:none;padding:0.5em 1.2em;border-radius:8px;font-size:1em;">
+				<option value="together">Together AI</option>
+					<option value="grok-llama3-70b-8192">Grok: Llama3-70B (Recommended)</option>
+					<option value="grok-llama3-8b-8192">Grok: Llama3-8B (Recommended)</option>
+					<option value="grok-mixtral-8x7b-32768">Grok: Mixtral-8x7B</option>
+					<option value="grok-gemma-7b-it">Grok: Gemma-7B-IT</option>
+			</select>
+				<span id="modelStatus" style="margin-left:1em;font-weight:600;"></span>
+		</div>
 			<div id="inputRow">
 				<input id="prompt" type="text" placeholder="Ask anything or @mention a Space" />
 				<button id="send">Send</button>
-			</div>
+		</div>
 			<div id="actionRow">
 				<button class="action-btn" id="troubleshoot">Troubleshoot</button>
 				<button class="action-btn" id="learn">Learn</button>
 				<button class="action-btn" id="factcheck">Fact Check</button>
 				<button class="action-btn" id="plan">Plan</button>
-			</div>
+				</div>
 			<div style="width:100%;display:flex;justify-content:center;margin-top:0.7em;">
 				<button id="clearChat" style="background:#232b4d;color:#b5ff7f;border:none;padding:0.7em 2em;border-radius:12px;font-size:1em;cursor:pointer;">Clear Chat</button>
 			</div>
@@ -255,6 +267,8 @@
 		const sendBtn = document.getElementById('send');
 		const loading = document.getElementById('loading');
 		let messages = [];
+		const modelSelect = document.getElementById('modelSelect');
+		const modelStatus = document.getElementById('modelStatus');
 
 		function renderMessages() {
 			chat.innerHTML = '';
@@ -276,13 +290,34 @@
 			renderMessages();
 		}
 
+		function updateModelStatus() {
+			const val = modelSelect.value;
+			if (val === 'together') {
+				modelStatus.textContent = '✅ General purpose (supports multiple models)';
+				modelStatus.style.color = '#7fdfff';
+			} else if (val === 'grok-llama3-70b-8192' || val === 'grok-llama3-8b-8192') {
+				modelStatus.textContent = '✅ Recommended (Latest)';
+				modelStatus.style.color = '#b5ff7f';
+			} else if (val === 'grok-mixtral-8x7b-32768' || val === 'grok-gemma-7b-it') {
+				modelStatus.textContent = 'ℹ️ Supported';
+				modelStatus.style.color = '#ffe066';
+			} else {
+				modelStatus.textContent = '';
+			}
+		}
+
+		modelSelect.addEventListener('change', updateModelStatus);
+		updateModelStatus(); // Set initial status
+
 		sendBtn.onclick = () => {
 			const prompt = input.value.trim();
 			if (!prompt) return;
 			addMessage('user', prompt);
 			input.value = '';
 			loading.style.display = 'block';
-			vscode.postMessage({ type: 'prompt', prompt });
+			let model = modelSelect ? modelSelect.value : 'together';
+			// Do NOT map to just 'grok' here; send the actual selected value
+			vscode.postMessage({ type: 'prompt', prompt, model });
 		};
 		input.addEventListener('keydown', function(e) {
 			if (e.key === 'Enter') sendBtn.onclick();

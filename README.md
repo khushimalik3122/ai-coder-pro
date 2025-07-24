@@ -1,6 +1,44 @@
 # AI Coder Pro
 
+<<<<<<< HEAD
 AI Coder Pro is a modern, smart VS Code extension that brings advanced AI coding assistance directly into your editor. It features a Perplexity-inspired chat UI, smart agents, file upload, and more to supercharge your coding workflow.
+=======
+AI-Coder-Pro is a Visual Studio Code extension that leverages AI-powered multi-agent orchestration to enhance your coding productivity. It is designed to automate, assist, and streamline development workflows directly within VS Code.
+
+## Research Motivation
+
+AI-Coder-Pro was developed to explore the integration of open, customizable LLMs (like Together AI's models) into developer workflows, with a focus on transparency, extensibility, and user privacy. Unlike proprietary tools, this extension allows users to select their own models and providers, and is designed for research and experimentation in code generation and multi-agent orchestration.
+
+## Feature Comparison
+
+| Feature                        | ai-coder-pro (Yours) | GitHub Copilot | TabNine | OpenAI GPT-3 Playground |
+|--------------------------------|:--------------------:|:--------------:|:-------:|:-----------------------:|
+| Open-source                    | ✅                   | ❌             | ❌      | ❌                      |
+| Custom model support           | ✅                   | ❌             | ❌      | ✅                      |
+| Together AI integration        | ✅                   | ❌             | ❌      | ❌                      |
+| VS Code integration            | ✅                   | ✅             | ✅      | ❌                      |
+| Multi-agent architecture       | (Planned)            | ❌             | ❌      | ❌                      |
+| Free to use (with API key)     | ✅                   | ❌             | ❌      | ❌                      |
+| User data privacy              | ✅                   | ❌             | ❌      | ❌                      |
+
+## Example Outputs
+
+<<<<<<< HEAD
+| Prompt                                        | ai-coder-pro Output (Kimi-K2-Instruct) | Copilot Output |
+|-----------------------------------------------|----------------------------------------|----------------|
+| "Write a Python function to reverse a string" |  <img width="3139" height="1921" alt="image" src="https://github.com/user-attachments/assets/9aaef219-68e8-4871-ae05-d99f3e8fd156" /> | <img width="2303" height="949" alt="image" src="https://github.com/user-attachments/assets/69fceb7a-4a0f-49d8-be7a-ce0d3f5c2ff3" /> |
+>>>>>>> a851507a4e6aefedafdd97fefe4ec62c34395aef
+
+## Tech Stack
+
+- **Language:** TypeScript (ES2022)
+- **Build Tool:** [esbuild](https://esbuild.github.io/) (custom build script)
+- **Extension API:** [VS Code Extension API](https://code.visualstudio.com/api)
+- **Linting:** ESLint with TypeScript support
+- **Testing:** Mocha, @vscode/test-cli, @vscode/test-electron
+- **Package Management:** npm
+- **Node.js Target:** Node16 (CommonJS)
+>>>>>>> ce53bbc013d6c9c73e5884443735def707f1548f
 
 ## Features
 
@@ -22,7 +60,7 @@ AI Coder Pro is a modern, smart VS Code extension that brings advanced AI coding
 
 1. **Clone the Repository**
    ```sh
-   git clone <your-repo-url>
+   git clone (https://github.com/khushimalik3122/ai-coder-pro)
    cd ai-coder-pro
    ```
 2. **Install Dependencies**
