@@ -36,7 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
 			'aiCoderProChat',
 			'AI Coder Pro Chat',
 			vscode.ViewColumn.Beside,
-			{ 
+			{
 				enableScripts: true,
 				retainContextWhenHidden: true
 			}
@@ -79,7 +79,12 @@ export function activate(context: vscode.ExtensionContext) {
 				const maxTokens = config.get<number>('maxTokens', 4096);
 				let response = '';
 				try {
-					conversationMemory.push({ role: 'user', content: message.prompt, timestamp: Date.now() });
+					// If image is included, store it in memory and append to prompt
+					if (message.image) {
+						conversationMemory.push({ role: 'user', content: `[Image attached]\n${message.prompt}`, timestamp: Date.now() });
+					} else {
+						conversationMemory.push({ role: 'user', content: message.prompt, timestamp: Date.now() });
+					}
 					// Filter context: only last 6 messages, skip code/HTML, max 500 chars each, and skip user analysis messages
 					const analysisKeywords = /analysis|breakdown|summary|semantics|structure|refactor|in short/i;
 					const recentMessages = conversationMemory.slice(-12)
@@ -283,6 +288,19 @@ FILES TO ANALYZE:
 									await vscode.workspace.applyEdit(edit);
 									appliedCount++;
 									totalIssues += issues.split('\n').length;
+								} else {
+									// If file does not exist, create it
+									if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+										const newFileUri = vscode.Uri.joinPath(vscode.workspace.workspaceFolders[0].uri, fileName);
+										const edit = new vscode.WorkspaceEdit();
+										edit.createFile(newFileUri, { ignoreIfExists: true });
+										edit.insert(newFileUri, new vscode.Position(0, 0), code);
+										await vscode.workspace.applyEdit(edit);
+										appliedCount++;
+										totalIssues += issues.split('\n').length;
+									} else {
+										panel.webview.postMessage({ type: 'ai', text: `⚠️ Could not create file ${fileName}: No workspace folder open.` });
+									}
 								}
 							} catch (e) {
 								panel.webview.postMessage({ type: 'ai', text: `⚠️ Could not apply changes to ${fileName}: ${e}` });

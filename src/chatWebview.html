@@ -231,18 +231,18 @@
 	<div id="main">
 		<div id="logo">AI Coder Pro</div>
 		<div id="chat-box">
-			<div id="chat"></div>
-			<div id="loading">AI is typing...</div>
+		<div id="chat"></div>
+		<div id="loading">AI is typing...</div>
 			<div id="inputRow">
 				<input id="prompt" type="text" placeholder="Ask anything or @mention a Space" />
 				<button id="send">Send</button>
-			</div>
+		</div>
 			<div id="actionRow">
 				<button class="action-btn" id="troubleshoot">Troubleshoot</button>
 				<button class="action-btn" id="learn">Learn</button>
 				<button class="action-btn" id="factcheck">Fact Check</button>
 				<button class="action-btn" id="plan">Plan</button>
-			</div>
+		</div>
 			<div style="width:100%;display:flex;justify-content:center;margin-top:0.7em;">
 				<button id="clearChat" style="background:#232b4d;color:#b5ff7f;border:none;padding:0.7em 2em;border-radius:12px;font-size:1em;cursor:pointer;">Clear Chat</button>
 			</div>
@@ -258,7 +258,7 @@
 
 		function renderMessages() {
 			chat.innerHTML = '';
-			for (const msg of messages) {
+			for (const [i, msg] of messages.entries()) {
 				const div = document.createElement('div');
 				div.className = 'message ' + msg.role;
 				let content = msg.text;
@@ -266,6 +266,18 @@
 					content = marked.parse(content); // Parse markdown for AI
 				}
 				div.innerHTML = content;
+				// Add copy button
+				const copyBtn = document.createElement('button');
+				copyBtn.textContent = '📋';
+				copyBtn.title = 'Copy message';
+				copyBtn.style.marginLeft = '0.7em';
+				copyBtn.style.background = 'none';
+				copyBtn.style.border = 'none';
+				copyBtn.style.cursor = 'pointer';
+				copyBtn.onclick = () => {
+					navigator.clipboard.writeText(msg.text);
+				};
+				div.appendChild(copyBtn);
 				chat.appendChild(div);
 			}
 			chat.scrollTop = chat.scrollHeight;
@@ -276,13 +288,44 @@
 			renderMessages();
 		}
 
+		// Image paste support
+		let pastedImageData = null;
+		input.addEventListener('paste', function(e) {
+			const items = e.clipboardData.items;
+			for (let item of items) {
+				if (item.type.startsWith('image/')) {
+					const file = item.getAsFile();
+					const reader = new FileReader();
+					reader.onload = function(event) {
+						pastedImageData = event.target.result;
+						// Show preview
+						let preview = document.getElementById('imagePreview');
+						if (!preview) {
+							preview = document.createElement('img');
+							preview.id = 'imagePreview';
+							preview.style.maxWidth = '120px';
+							preview.style.maxHeight = '80px';
+							preview.style.display = 'block';
+							preview.style.margin = '0.5em auto';
+							input.parentNode.insertBefore(preview, input);
+						}
+						preview.src = pastedImageData;
+					};
+					reader.readAsDataURL(file);
+				}
+			}
+		});
 		sendBtn.onclick = () => {
 			const prompt = input.value.trim();
-			if (!prompt) return;
-			addMessage('user', prompt);
+			if (!prompt && !pastedImageData) return;
+			addMessage('user', prompt + (pastedImageData ? '\n[Image attached]' : ''));
 			input.value = '';
 			loading.style.display = 'block';
-			vscode.postMessage({ type: 'prompt', prompt });
+			vscode.postMessage({ type: 'prompt', prompt, image: pastedImageData });
+			// Remove preview after sending
+			const preview = document.getElementById('imagePreview');
+			if (preview) preview.remove();
+			pastedImageData = null;
 		};
 		input.addEventListener('keydown', function(e) {
 			if (e.key === 'Enter') sendBtn.onclick();
