@@ -2,11 +2,58 @@
 
 <<<<<<< HEAD
 AI Coder Pro is a modern, smart VS Code extension that brings advanced AI coding assistance directly into your editor. It features a Perplexity-inspired chat UI, smart agents, file upload, and more to supercharge your coding workflow.
+<<<<<<< HEAD
 ---
 # UI 
 ![AI Coder Pro](<img width="2356" height="1304" alt="image" src="https://github.com/user-attachments/assets/0917b54e-3f63-4a22-9ad6-8e213d43cd36" />
 =======
 AI-Coder-Pro is a Visual Studio Code extension that leverages AI-powered multi-agent orchestration to enhance your coding productivity. It is designed to automate, assist, and streamline development workflows directly within VS Code.
+=======
+=======
+AI-Coder-Pro is a Visual Studio Code extension that leverages AI-powered multi-agent orchestration to enhance your coding productivity. It is designed to automate, assist, and streamline development workflows directly within VS Code.
+## UI
+<img width="2645" height="2055" alt="image" src="https://github.com/user-attachments/assets/91c8071f-60ae-4590-951e-8a2803c893c1" />
+
+---
+## Research 
+
+AI-Coder-Pro was developed to explore the integration of open, customizable LLMs (like Together AI's models) into developer workflows, with a focus on transparency, extensibility, and user privacy. Unlike proprietary tools, this extension allows users to select their own models and providers, and is designed for research and experimentation in code generation and multi-agent orchestration.
+---
+## documentation
+[documentation](https://github.com/khushimalik3122/ai-coder-pro/blob/main/AI%20Coder%20Pro.pdf)
+---
+## Feature Comparison
+
+| Feature                        | ai-coder-pro         | GitHub Copilot | TabNine | OpenAI GPT-3 Playground |
+|--------------------------------|:--------------------:|:--------------:|:-------:|:-----------------------:|
+| Open-source                    | ✅                   | ❌             | ❌      | ❌                      |
+| Custom model support           | ✅                   | ❌             | ❌      | ✅                      |
+| Together AI integration        | ✅                   | ❌             | ❌      | ❌                      |
+| VS Code integration            | ✅                   | ✅             | ✅      | ❌                      |
+| Multi-agent architecture       | (Planned)            | ❌             | ❌      | ❌                      |
+| Free to use (with API key)     | ✅                   | ❌             | ❌      | ❌                      |
+| User data privacy              | ✅                   | ❌             | ❌      | ❌                      |
+
+## Example Outputs
+
+
+| Prompt                                        | ai-coder-pro Output (Kimi-K2-Instruct) | Copilot Output |
+|-----------------------------------------------|----------------------------------------|----------------|
+| "Write a Python function to reverse a string" |  <img width="3139" height="1921" alt="image" src="https://github.com/user-attachments/assets/9aaef219-68e8-4871-ae05-d99f3e8fd156" /> | <img width="2303" height="949" alt="image" src="https://github.com/user-attachments/assets/69fceb7a-4a0f-49d8-be7a-ce0d3f5c2ff3" /> |
+---
+
+## Tech Stack
+
+- **Language:** TypeScript (ES2022)
+- **Build Tool:** [esbuild](https://esbuild.github.io/) (custom build script)
+- **Extension API:** [VS Code Extension API](https://code.visualstudio.com/api)
+- **Linting:** ESLint with TypeScript support
+- **Testing:** Mocha, @vscode/test-cli, @vscode/test-electron
+- **Package Management:** npm
+- **Node.js Target:** Node16 (CommonJS)
+- **create api** [together api](https://www.together.ai/)
+
+>>>>>>> d2b480eea292709498c9c75a3fac130587d6a1be
 
 ## Research Motivation
 
@@ -62,7 +109,8 @@ AI-Coder-Pro was developed to explore the integration of open, customizable LLMs
 - **Library Section**: (Placeholder) For future features like saved threads and knowledge base.
 
 ## How to Run
-
+Follow these steps  in command prompt
+and sabse pahale together api set kar lenaa uper link dii hui h [together api](https://www.together.ai/)
 1. **Clone the Repository**
    ```sh
    git clone https://github.com/khushimalik3122/ai-coder-pro
@@ -74,7 +122,8 @@ AI-Coder-Pro was developed to explore the integration of open, customizable LLMs
    ```
 3. **Build the Extension**
    ```sh
-   npm run build
+   npm run compile
+   code .
    ```
 4. **Open in VS Code**
    - Open this folder in VS Code.

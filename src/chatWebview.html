@@ -242,7 +242,7 @@
 				<button class="action-btn" id="learn">Learn</button>
 				<button class="action-btn" id="factcheck">Fact Check</button>
 				<button class="action-btn" id="plan">Plan</button>
-		</div>
+			</div>
 			<div style="width:100%;display:flex;justify-content:center;margin-top:0.7em;">
 				<button id="clearChat" style="background:#232b4d;color:#b5ff7f;border:none;padding:0.7em 2em;border-radius:12px;font-size:1em;cursor:pointer;">Clear Chat</button>
 			</div>
@@ -315,13 +315,17 @@
 				}
 			}
 		});
+
+
 		sendBtn.onclick = () => {
 			const prompt = input.value.trim();
 			if (!prompt && !pastedImageData) return;
 			addMessage('user', prompt + (pastedImageData ? '\n[Image attached]' : ''));
 			input.value = '';
 			loading.style.display = 'block';
-			vscode.postMessage({ type: 'prompt', prompt, image: pastedImageData });
+			let model = modelSelect ? modelSelect.value : 'together';
+			// Do NOT map to just 'grok' here; send the actual selected value
+			vscode.postMessage({ type: 'prompt', prompt, model, image: pastedImageData });
 			// Remove preview after sending
 			const preview = document.getElementById('imagePreview');
 			if (preview) preview.remove();

@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { BasicAgent } from './agents/BasicAgent';
+import { GrokAgent } from './agents/GrokAgent';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -70,11 +71,8 @@ export function activate(context: vscode.ExtensionContext) {
 			if (message.type === 'prompt') {
 				const config = vscode.workspace.getConfiguration('aiCoderPro');
 				let apiKey = togetherKeyOverride || config.get<string>('togetherApiKey') || process.env.TOGETHER_API_KEY;
+				let grokApiKey = config.get<string>('grokApiKey') || process.env.GROQ_API_KEY;
 				console.log('Debug: API Key available:', !!apiKey);
-				if (!apiKey) {
-					panel.webview.postMessage({ type: 'ai', text: '❌ Together AI API Key is required. Please set your API key in settings (gear icon).' });
-					return;
-				}
 				const temperature = config.get<number>('temperature', 0.7);
 				const maxTokens = config.get<number>('maxTokens', 4096);
 				let response = '';
@@ -98,9 +96,34 @@ export function activate(context: vscode.ExtensionContext) {
 					} else {
 						contextPrompt = `${systemPrompt}\n\nUser: ${message.prompt}`;
 					}
-					console.log('Debug: Calling AI with Together AI');
-					const agent = new BasicAgent(apiKey!);
-					response = await agent.generateCompletion(contextPrompt, { temperature, maxTokens });
+					// --- Groq model mapping ---
+					const groqModelMap: Record<string, string> = {
+						'grok-llama3-70b-8192': 'llama-3.3-70b-versatile',
+						'grok-llama3-8b-8192': 'llama-3.3-8b-instant',
+						'grok-mixtral-8x7b-32768': 'mixtral-8x7b-32768',
+						'grok-gemma-7b-it': 'gemma-7b-it'
+					};
+					let model = message.model || 'together';
+					if (model.startsWith('grok-')) {
+						if (!grokApiKey) {
+							panel.webview.postMessage({ type: 'ai', text: '❌ Grok API Key is required. Please set your Grok API key in settings.' });
+							return;
+						}
+						const groqModelName = groqModelMap[model] || 'llama-3.3-70b-versatile';
+						const agent = new GrokAgent(grokApiKey, groqModelName);
+						// Convert conversationMemory to AIMessage[] (role, content)
+						const grokMessages = recentMessages.map(m => ({ role: m.role as 'user' | 'assistant' | 'system', content: m.content }));
+						// Add current user prompt
+						grokMessages.push({ role: 'user', content: message.prompt });
+						response = await agent.generateCompletionWithContext(grokMessages, { temperature, maxTokens });
+					} else {
+				if (!apiKey) {
+							panel.webview.postMessage({ type: 'ai', text: '❌ Together AI API Key is required. Please set your API key in settings (gear icon).' });
+							return;
+						}
+						const agent = new BasicAgent(apiKey!);
+						response = await agent.generateCompletion(contextPrompt, { temperature, maxTokens });
+					}
 					console.log('Debug: AI response received, length:', response.length);
 					conversationMemory.push({ role: 'assistant', content: response, timestamp: Date.now() });
 					saveMemory();
@@ -153,11 +176,11 @@ export function activate(context: vscode.ExtensionContext) {
 			if (message.type === 'agentStart') {
 				panel.webview.postMessage({ type: 'ai', text: '🤖 Agent is starting autonomous analysis...\n\n🔍 Step 1: Scanning project structure...' });
 				const config = vscode.workspace.getConfiguration('aiCoderPro');
+				let model = message.model || 'together';
 				let apiKey = togetherKeyOverride || config.get<string>('togetherApiKey') || process.env.TOGETHER_API_KEY;
-				if (!apiKey) {
-					panel.webview.postMessage({ type: 'ai', text: 'API Key is required for the selected model.' });
-					return;
-				}
+				let grokApiKey = config.get<string>('grokApiKey') || process.env.GROK_API_KEY;
+				const temperature = config.get<number>('temperature', 0.3);
+				const maxTokens = config.get<number>('maxTokens', 16384);
 				
 				// Step 1: Gather all project files
 				panel.webview.postMessage({ type: 'ai', text: '📁 Scanning for code files...' });
@@ -253,13 +276,30 @@ FILES TO ANALYZE:
 
 				// Step 4: Call AI with enhanced parameters
 				panel.webview.postMessage({ type: 'ai', text: '🤖 Step 3: AI is analyzing and generating fixes...' });
-				const temperature = config.get<number>('temperature', 0.3); // Lower temperature for more focused analysis
-				const maxTokens = config.get<number>('maxTokens', 16384); // Much higher for comprehensive analysis
 				
 				try {
 					let response = '';
-					const agent = new BasicAgent(apiKey!);
-					response = await agent.generateCompletion(analysisPrompt, { temperature, maxTokens });
+					if (model === 'grok') {
+						if (!grokApiKey) {
+							panel.webview.postMessage({ type: 'ai', text: 'Grok API Key is required for agentic workflow.' });
+							return;
+						}
+						const agent = new GrokAgent(grokApiKey);
+						// Build messages for agentic workflow
+						const agenticMessages = [
+							{ role: 'user' as 'user', content: 'Agent autonomous analysis request' },
+							{ role: 'user' as 'user', content: analysisPrompt }
+						];
+						const workflowInstructions = 'You are an autonomous AI coding agent. Follow the instructions and perform multi-step reasoning and code improvement.';
+						response = await agent.runAgenticWorkflow(agenticMessages, workflowInstructions, { temperature, maxTokens });
+					} else {
+						if (!apiKey) {
+							panel.webview.postMessage({ type: 'ai', text: 'API Key is required for the selected model.' });
+							return;
+						}
+						const agent = new BasicAgent(apiKey!);
+						response = await agent.generateCompletion(analysisPrompt, { temperature, maxTokens });
+					}
 					
 					// Step 5: Parse and apply changes
 					panel.webview.postMessage({ type: 'ai', text: '🔧 Step 4: Applying fixes automatically...' });
