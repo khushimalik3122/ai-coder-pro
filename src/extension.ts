@@ -1,6 +1,9 @@
 import * as vscode from 'vscode';
 import { BasicAgent } from './agents/BasicAgent';
 import { GrokAgent } from './agents/GrokAgent';
+import { RAGService } from './services/RAGService';
+import { ContextManager } from './services/ContextManager';
+import { AgenticWorkflow } from './services/AgenticWorkflow';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -10,6 +13,12 @@ dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 export function activate(context: vscode.ExtensionContext) {
 	console.log('AI Coder Pro extension is now active!');
+
+	// Initialize advanced services
+	const workspacePath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || '';
+	const ragService = new RAGService(workspacePath);
+	const contextManager = new ContextManager(ragService);
+	const agenticWorkflow = new AgenticWorkflow(ragService, contextManager);
 
 	// Initialize conversation memory
 	let conversationMemory: { role: string; content: string; timestamp: number }[] = [];
@@ -29,6 +38,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const helloDisposable = vscode.commands.registerCommand('ai-coder-pro.helloWorld', () => {
 		vscode.window.showInformationMessage('Hello World from ai-coder-pro!');
+	});
+
+	// Index workspace on activation
+	ragService.indexWorkspace().then(() => {
+		const stats = ragService.getStats();
+		console.log(`📚 Workspace indexed: ${stats.totalDocuments} documents, ${stats.indexedTypes.length} file types`);
 	});
 
 	const chatPanelDisposable = vscode.commands.registerCommand('aiCoderPro.openChatPanel', () => {
@@ -68,6 +83,19 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 				return;
 			}
+			if (message.type === 'indexWorkspace') {
+				try {
+					await ragService.indexWorkspace();
+					const stats = ragService.getStats();
+					panel.webview.postMessage({ 
+						type: 'ai', 
+						text: `📚 Workspace indexed successfully!\n\n📊 Statistics:\n- Total documents: ${stats.totalDocuments}\n- File types: ${stats.indexedTypes.join(', ')}\n\nYour project is now ready for context-aware AI assistance!` 
+					});
+				} catch (error) {
+					panel.webview.postMessage({ type: 'ai', text: `❌ Failed to index workspace: ${error}` });
+				}
+				return;
+			}
 			if (message.type === 'prompt') {
 				const config = vscode.workspace.getConfiguration('aiCoderPro');
 				let apiKey = togetherKeyOverride || config.get<string>('togetherApiKey') || process.env.TOGETHER_API_KEY;
@@ -77,24 +105,30 @@ export function activate(context: vscode.ExtensionContext) {
 				const maxTokens = config.get<number>('maxTokens', 4096);
 				let response = '';
 				try {
+					// Use agentic workflow for enhanced processing
+					const enhancedPrompt = await agenticWorkflow.executeWorkflow(message.prompt);
+					
 					// If image is included, store it in memory and append to prompt
 					if (message.image) {
 						conversationMemory.push({ role: 'user', content: `[Image attached]\n${message.prompt}`, timestamp: Date.now() });
 					} else {
 						conversationMemory.push({ role: 'user', content: message.prompt, timestamp: Date.now() });
 					}
+					
 					// Filter context: only last 6 messages, skip code/HTML, max 500 chars each, and skip user analysis messages
 					const analysisKeywords = /analysis|breakdown|summary|semantics|structure|refactor|in short/i;
 					const recentMessages = conversationMemory.slice(-12)
 						.filter(m => m.content.length < 500 && !/^\s*<|^\s*\{|^\s*\/\//.test(m.content))
 						.filter(m => !(m.role === 'user' && analysisKeywords.test(m.content)))
 						.slice(-6);
+					
 					let contextPrompt = '';
-					const systemPrompt = 'You are AI Coder Pro, a helpful coding assistant. Only return code if the user specifically asks for it. If the user provides their own analysis, do not repeat or summarize it. Always provide your own independent, original analysis.';
+					const systemPrompt = 'You are AI Coder Pro, a helpful coding assistant with advanced context awareness. Use the provided context to give more accurate and relevant responses. Only return code if the user specifically asks for it. If the user provides their own analysis, do not repeat or summarize it. Always provide your own independent, original analysis.';
+					
 					if (recentMessages.length > 0) {
-						contextPrompt = `${systemPrompt}\n\nPrevious conversation context:\n${recentMessages.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nCurrent request: ${message.prompt}`;
+						contextPrompt = `${systemPrompt}\n\n${enhancedPrompt}\n\nPrevious conversation context:\n${recentMessages.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nCurrent request: ${message.prompt}`;
 					} else {
-						contextPrompt = `${systemPrompt}\n\nUser: ${message.prompt}`;
+						contextPrompt = `${systemPrompt}\n\n${enhancedPrompt}\n\nUser: ${message.prompt}`;
 					}
 					// --- Groq model mapping ---
 					const groqModelMap: Record<string, string> = {

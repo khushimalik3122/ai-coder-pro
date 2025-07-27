@@ -243,8 +243,9 @@
 				<button class="action-btn" id="factcheck">Fact Check</button>
 				<button class="action-btn" id="plan">Plan</button>
 			</div>
-			<div style="width:100%;display:flex;justify-content:center;margin-top:0.7em;">
+			<div style="width:100%;display:flex;justify-content:center;gap:1em;margin-top:0.7em;">
 				<button id="clearChat" style="background:#232b4d;color:#b5ff7f;border:none;padding:0.7em 2em;border-radius:12px;font-size:1em;cursor:pointer;">Clear Chat</button>
+				<button id="indexWorkspace" style="background:#20c997;color:#181a20;border:none;padding:0.7em 2em;border-radius:12px;font-size:1em;cursor:pointer;font-weight:600;">📚 Index Workspace</button>
 			</div>
 		</div>
 	</div>
@@ -323,9 +324,7 @@
 			addMessage('user', prompt + (pastedImageData ? '\n[Image attached]' : ''));
 			input.value = '';
 			loading.style.display = 'block';
-			let model = modelSelect ? modelSelect.value : 'together';
-			// Do NOT map to just 'grok' here; send the actual selected value
-			vscode.postMessage({ type: 'prompt', prompt, model, image: pastedImageData });
+			vscode.postMessage({ type: 'prompt', prompt, image: pastedImageData });
 			// Remove preview after sending
 			const preview = document.getElementById('imagePreview');
 			if (preview) preview.remove();
@@ -345,6 +344,11 @@
 			messages = [];
 			renderMessages();
 			vscode.postMessage({ type: 'clearMemory' });
+		};
+
+		document.getElementById('indexWorkspace').onclick = () => {
+			addMessage('user', '📚 Indexing workspace for context-aware AI assistance...');
+			vscode.postMessage({ type: 'indexWorkspace' });
 		};
 
 		// File uploader logic
