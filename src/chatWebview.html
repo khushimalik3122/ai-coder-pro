@@ -347,7 +347,7 @@
 		};
 
 		document.getElementById('indexWorkspace').onclick = () => {
-			addMessage('user', '📚 Indexing workspace for context-aware AI assistance...');
+			addMessage('user', 'Indexing workspace for context-aware AI assistance...');
 			vscode.postMessage({ type: 'indexWorkspace' });
 		};
 
@@ -365,7 +365,7 @@
 					reader.onload = function(event) {
 						const content = event.target.result;
 						vscode.postMessage({ type: 'fileUpload', files: [file.name], content });
-						addMessage('user', `📁 Uploaded file: ${file.name}`);
+						addMessage('user', ` Uploaded file: ${file.name}`);
 					};
 					reader.readAsText(file);
 				};
