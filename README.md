@@ -4,7 +4,8 @@ AI Coder Pro is a modern, smart VS Code extension that brings advanced AI coding
 ----
 AI-Coder-Pro is a Visual Studio Code extension that leverages AI-powered multi-agent orchestration to enhance your coding productivity. It is designed to automate, assist, and streamline development workflows directly within VS Code.
 ## UI
-<img width="2645" height="2055" alt="image" src="https://github.com/user-attachments/assets/91c8071f-60ae-4590-951e-8a2803c893c1" />
+<img width="3839" height="2157" alt="image" src="https://github.com/user-attachments/assets/f3e96951-a1c6-4727-8192-e0385464d640" />
+
 
 ---
 ## Research 
